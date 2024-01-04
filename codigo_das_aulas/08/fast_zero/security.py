@@ -24,11 +24,10 @@ def create_access_token(data: dict[str, str | datetime]) -> str:
     expire = datetime.utcnow() + timedelta(
         minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
     )
-    to_encode.update({'exp': expire})
-    encoded_jwt = jwt.encode(
+    to_encode['exp'] = expire
+    return jwt.encode(
         to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM
     )
-    return encoded_jwt
 
 
 def get_password_hash(password: str) -> str:
@@ -56,10 +55,10 @@ def get_current_user(
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
-        username: str = payload.get('sub')
-        if not username:
+        if username := payload.get('sub'):
+            token_data = TokenData(username=username)
+        else:
             raise credentials_exception
-        token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
 

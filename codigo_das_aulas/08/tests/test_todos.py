@@ -132,7 +132,7 @@ def test_delete_todo(session, client, user, token):
 
 def test_delete_todo_error(client, token):
     response = client.delete(
-        f'/todos/{10}', headers={'Authorization': f'Bearer {token}'}
+        '/todos/10', headers={'Authorization': f'Bearer {token}'}
     )
 
     assert response.status_code == 404
